@@ -197,7 +197,13 @@ def check_det_dataset(dataset, autodownload=True):
         extract_dir, autodownload = data.parent, False
 
     # Read yaml (optional)
+    parent_dir = ''
     if isinstance(data, (str, Path)):
+        if isinstance(data, str):
+            parent_dir = Path(data).parent
+        else:
+            parent_dir = data.parent
+
         data = yaml_load(data, append_filename=True)  # dictionary
 
     # Checks
@@ -211,7 +217,7 @@ def check_det_dataset(dataset, autodownload=True):
     data['nc'] = len(data['names'])
 
     # Resolve paths
-    path = Path(extract_dir or data.get('path') or '')  # optional 'path' default to '.'
+    path = Path(extract_dir or data.get('path') or parent_dir or '')  # optional 'path' default to '.'
     if not path.is_absolute():
         path = (DATASETS_DIR / path).resolve()
         data['path'] = path  # download scripts
